@@ -30,6 +30,7 @@ const apolloServer = new ApolloServer({
     // console.log(req.email);
     return {
       email: req.email,
+      loggedInUserId: req.loggedInUserId,
     };
   },
 });
