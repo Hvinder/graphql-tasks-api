@@ -1,7 +1,5 @@
-const uuid = require("uuid");
 const { combineResolvers } = require("graphql-resolvers");
 
-const { tasks, users } = require("../constants");
 const Task = require("../database/models/task");
 const User = require("../database/models/user");
 const { isAuthenticated, isTaskOwner } = require("./middleware");
@@ -10,9 +8,12 @@ module.exports = {
   Query: {
     tasks: combineResolvers(
       isAuthenticated,
-      async (_, __, { loggedInUserId }) => {
+      async (_, { skip = 0, limit = 10 }, { loggedInUserId }) => {
         try {
-          const tasks = await Task.find({ user: loggedInUserId });
+          const tasks = await Task.find({ user: loggedInUserId })
+            .sort({ _id: -1 })
+            .skip(skip)
+            .limit(limit);
           return tasks;
         } catch (err) {
           throw err;
